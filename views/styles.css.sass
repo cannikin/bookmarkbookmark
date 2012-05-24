@@ -1,0 +1,60 @@
+$background: #eeeeee
+$links: #336699
+$text: #333333
+$font-family: Helvetica Neue, sans-serif
+
+@mixin border-radius($radius)
+  -webkit-border-radius: $radius
+  -moz-border-radius: $radius
+  -ms-border-radius: $radius
+  -o-border-radius: $radius
+  border-radius: $radius
+  
+@mixin box-shadow($value)
+  -webkit-box-shadow: $value
+  -moz-box-shadow: $value
+  -ms-box-shadow: $value
+  -o-box-shadow: $value
+  box-shadow: $value
+
+.bkbk
+  font-family: $font-family
+  font-size: 13px
+  position: fixed
+  width: 260px
+  height: 100%
+  padding: 0
+  overflow-x: hidden
+  overflow-y: auto
+  z-index: 9999
+  top: 0
+  left: -305px
+  +box-shadow(3px 0 3px rgba(0,0,0,0.1))
+  background-color: $background
+  ul
+    margin: 0
+    padding: 0
+    list-style: none
+    line-height: 1
+  a
+    display: block
+    padding: 0.8em 1em
+    color: $links
+    text-decoration: none
+    &:hover
+      background-color: lighten($background, 5%)
+      color: $text
+
+.bkbk-search
+  padding: 10px
+  margin: 0 0 10px
+  input
+    width: 100%
+    font-size: 14px
+    font-family: $font-family
+  border-bottom: 1px solid darken($background, 10%)
+
+.bkbk-loading
+  display: block
+  width: 32px
+  margin: 100px auto

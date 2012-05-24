@@ -22,12 +22,13 @@
       content += "  s = d.createElement('script'),";
       content += "  l = encodeURIComponent(w.location),";
       content += "  lib = ('__proto__' in {} ? 'zepto' : 'jquery'),";
-      content += "  u = 'http://10.0.0.17:4567/bkbk.js?lib='+lib;";
+      content += "  u = 'http://10.0.0.17:4567/bkbk.js?u=9c8ee790-880d-012f-bf7e-60f8472ce36e&lib='+lib;";
       content += "  function load() {";
       content += "    if (d.readyState && d.readyState != 'complete') {";
       content += "      setTimeout(load, 200);";
       content += "    } else {";
       content += "      s.setAttribute('src', u);";
+      content += "      s.setAttribute('type', 'text/javascript');";
       content += "      d.body.appendChild(s);";
       content += "    }";
       content += "  }";

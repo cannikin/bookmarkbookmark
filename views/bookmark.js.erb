@@ -1,29 +1,56 @@
 <%= @js_lib %>
 
 $(function() {
+  var user = '<%= @user.uuid %>';
   var styles = "<%= @styles %>";
+  var body = $('body');
 
   // Create style wrapper
   var style = $('<style>').attr('type','text/css').text(styles);
   
   // Create bookmark container and list
   var container = $('<div>').addClass('bkbk');
+  var search = $('<div>').addClass('bkbk-search');
+  search.append($('<input>').attr('type','search').attr('placeholder','Search...'));
   var list = $('<ul>');
   var loading = $('<img>').attr('src','<%= @host_with_port %>/images/indicator_medium.gif').addClass('bkbk-loading');
-  var close = $('<a>').attr('href', '#').addClass('bkbk-close').html('&times;');
   
   // <li><a href="//google.com">Google</a></li></ul>');
-  container.prepend(list).prepend(loading).prepend(close);
+  container.prepend(list).prepend(loading).prepend(search);
 
   // Add bookmark styles and contents to page
-  $('body').prepend(style).prepend(container);
+  body.prepend(style).prepend(container);
   
-  // Add the close button and setup click handling
-  $('.bkbk-close').on('click', function(e) {
+  // Stop propagation of click events in the container so as to not close the panel
+  container.on('click', function(e) {
+    e.stopPropagation();
+  });
+  
+  // Watch for clicks on the background and close the panel
+  $(document).one('click', function(e) {
     container.animate({'left':'-305px'}, 500, 'ease');
-    e.preventDefault();
   });
   
   // Finally, show the list
   container.animate({'left':'0'}, 500, 'ease');
+  
+  
+  // Loading bookmarks callback
+  window.bkbkLoad = function(data) {
+    loading.hide();
+    // Add all the bookmarks to the list
+    //$.each(data, function(index,item) {
+      $.each(data, function(key, value) {
+        list.append($('<li>').append($('<a>').attr('href',value).text(key)));
+      });
+    //});
+  };
+  
+  var loadScript = document.createElement('script');
+  loadScript.setAttribute('src','<%= @host_with_port %>/' + user + '/bookmarks?callback=bkbkLoad');
+  loadScript.setAttribute('type','text/javascript');
+  document.body.appendChild(loadScript);
+  // Now, get the initial list of bookmarks
+  // var loadScript = $('<script>').attr('src','<%= @host_with_port %>/1234').attr('type','text/javascript');
+  // body.append(loadScript);
 });
