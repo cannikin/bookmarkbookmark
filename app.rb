@@ -32,7 +32,6 @@ end
 
 get '/bkbk.js' do
   if @user = User.where(:uuid => params[:u]).first
-    @host_with_port = '//' + request.host + (request.port == 80 ? '' : ":#{request.port}")
     @js_lib = File.read("public/javascripts/#{params[:lib]}.min.js")
     @styles = Sass::Engine.new(File.read('views/styles.css.sass'), 
       :style => :compressed).render.chomp
@@ -103,6 +102,10 @@ helpers do
       headers 'Content-Type' => 'application/json'
     end
     return output
+  end
+  
+  def host_with_port
+    request.host + (request.port == 80 ? '' : ':' + request.port.to_s)
   end
   
 end

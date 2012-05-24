@@ -1,6 +1,38 @@
 <%= @js_lib %>
 
 $(function() {
+
+  //////////////////
+  // Callbacks
+  //////////////////
+  
+  // Loading bookmarks callback
+  window.bkbkLoad = function(data) {
+    loading.hide();
+    $.each(data, function(key, value) {
+      list.append($('<li>').append($('<a>').attr('href',value).text(key)));
+    });
+  };
+  
+  window.bkbkAdd = function(data) {
+    
+  };
+  
+  window.bkbkEdit = function(data) {
+    
+  };
+  
+  window.bkbkDelete = function(data) {
+    
+  };
+  
+  var addRemote = function(path, callback) {
+    var remoteScript = document.createElement('script');
+    remoteScript.setAttribute('src','//<%= host_with_port %>/' + path + '?callback=' + callback);
+    remoteScript.setAttribute('type','text/javascript');
+    document.body.appendChild(remoteScript);
+  };
+  
   var user = '<%= @user.uuid %>';
   var styles = "<%= @styles %>";
   var body = $('body');
@@ -13,13 +45,10 @@ $(function() {
   var search = $('<div>').addClass('bkbk-search');
   search.append($('<input>').attr('type','search').attr('placeholder','Search...'));
   var list = $('<ul>');
-  var loading = $('<img>').attr('src','<%= @host_with_port %>/images/indicator_medium.gif').addClass('bkbk-loading');
+  var loading = $('<img>').attr('src','//<%= host_with_port %>/images/indicator_medium.gif').addClass('bkbk-loading');
   
-  // <li><a href="//google.com">Google</a></li></ul>');
+  // Add UI elements to the container
   container.prepend(list).prepend(loading).prepend(search);
-
-  // Add bookmark styles and contents to page
-  body.prepend(style).prepend(container);
   
   // Stop propagation of click events in the container so as to not close the panel
   container.on('click', function(e) {
@@ -31,26 +60,13 @@ $(function() {
     container.animate({'left':'-305px'}, 500, 'ease');
   });
   
-  // Finally, show the list
+  // Add styles and container to page
+  body.prepend(style).prepend(container);
+  
+  // Finally, show the list and put the cursor in the search box
   container.animate({'left':'0'}, 500, 'ease');
+  search.find('input').focus();
   
-  
-  // Loading bookmarks callback
-  window.bkbkLoad = function(data) {
-    loading.hide();
-    // Add all the bookmarks to the list
-    //$.each(data, function(index,item) {
-      $.each(data, function(key, value) {
-        list.append($('<li>').append($('<a>').attr('href',value).text(key)));
-      });
-    //});
-  };
-  
-  var loadScript = document.createElement('script');
-  loadScript.setAttribute('src','<%= @host_with_port %>/' + user + '/bookmarks?callback=bkbkLoad');
-  loadScript.setAttribute('type','text/javascript');
-  document.body.appendChild(loadScript);
-  // Now, get the initial list of bookmarks
-  // var loadScript = $('<script>').attr('src','<%= @host_with_port %>/1234').attr('type','text/javascript');
-  // body.append(loadScript);
+  // Finally, load the list of bookmarks
+  addRemote(user+'/bookmarks', 'bkbkLoad');
 });
