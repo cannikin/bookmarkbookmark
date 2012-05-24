@@ -16,6 +16,13 @@ $font-family: Helvetica Neue, sans-serif
   -ms-box-shadow: $value
   -o-box-shadow: $value
   box-shadow: $value
+  
+@mixin transition($trans)
+  -webkit-transition: $trans
+  -moz-transition: $trans
+  -ms-transition: $trans
+  -o-transition: $trans
+  transition: $trans
 
 .bkbk
   font-family: $font-family
@@ -41,9 +48,11 @@ $font-family: Helvetica Neue, sans-serif
     padding: 0.8em 1em
     color: $links
     text-decoration: none
+    +transition(background-color .1s linear)
     &:hover
       background-color: lighten($background, 5%)
       color: $text
+      +transition(background-color .1s linear)
 
 .bkbk-search
   padding: 10px

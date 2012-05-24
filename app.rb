@@ -38,6 +38,7 @@ get '/bkbk.js' do
     
     headers "Content-Type" => "application/javascript"
     erb :'bookmark.js'
+    # uglify 'bookmark.js.erb'
   else
     User.where(:uuid => params[:u]).inspect
   end
@@ -106,6 +107,10 @@ helpers do
   
   def host_with_port
     request.host + (request.port == 80 ? '' : ':' + request.port.to_s)
+  end
+  
+  def uglify(file)
+    Uglifier.compile(ERB.new(File.read(File.join('views', file))).result(binding))
   end
   
 end

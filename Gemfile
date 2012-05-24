@@ -7,6 +7,8 @@ gem 'haml'
 gem 'sass'
 gem 'json'
 gem 'uuid'
+gem 'uglifier'
+gem 'therubyracer'
 
 group :development do
   gem 'pry'
