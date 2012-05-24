@@ -1,4 +1,4 @@
 bookmarkbookmark
 ================
 
-Finally makes bookmarks awesome
+Finally makes bookmarks awesome.

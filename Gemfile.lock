@@ -1,26 +1,24 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (3.2.3)
-      i18n (~> 0.6)
-      multi_json (~> 1.0)
-    i18n (0.6.0)
-    multi_json (1.3.4)
+    haml (3.1.6)
     rack (1.4.1)
-    rack-test (0.6.1)
+    rack-protection (1.2.0)
+      rack
+    sass (3.1.18)
+    shotgun (0.9)
       rack (>= 1.0)
-    serve (1.5.1)
-      activesupport (~> 3.0)
-      i18n
-      rack (~> 1.2)
-      rack-test (~> 0.5)
-      tilt (~> 1.3)
-      tzinfo
+    sinatra (1.3.2)
+      rack (~> 1.3, >= 1.3.6)
+      rack-protection (~> 1.2)
+      tilt (~> 1.3, >= 1.3.3)
     tilt (1.3.3)
-    tzinfo (0.3.33)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  serve
+  haml
+  sass
+  shotgun
+  sinatra

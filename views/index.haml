@@ -1,0 +1,40 @@
+!!! 5
+%html
+  %head
+    %title BookmarkBookmark Test
+  %body
+    %a(id="link" title="BookmarkBookmark") BookmarkBookmark
+    
+    %p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus et augue dui, vel aliquam neque. Aenean rhoncus risus sit amet orci volutpat sed hendrerit erat convallis. Pellentesque nec erat mauris, vitae interdum felis. Quisque erat urna, adipiscing non tristique et, venenatis in neque. Pellentesque nisi lectus, pretium in ullamcorper a, convallis eu est. Aliquam fermentum interdum est quis varius. Cras pellentesque elit et turpis imperdiet in congue libero rutrum. Nullam sodales tincidunt ante in pulvinar. Mauris sollicitudin felis ut est fermentum non hendrerit orci gravida. Nam quis libero vel leo pharetra mollis. Suspendisse potenti. Donec posuere ipsum at eros bibendum a ultricies turpis semper. Duis lacinia est scelerisque nibh vulputate non aliquam diam accumsan. Curabitur bibendum dui in risus consectetur sollicitudin. Nam neque lorem, malesuada at malesuada a, dictum ut dolor.
+    
+    %p Nunc vehicula, lorem eget posuere molestie, sem tellus accumsan nunc, vitae dapibus quam sapien nec diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer urna risus, vulputate ullamcorper ultricies vitae, consequat eu erat. Vivamus mollis ligula vitae erat sagittis ornare. Proin cursus egestas ullamcorper. Etiam egestas commodo tellus, in vestibulum leo aliquam vitae. Ut at lobortis sem. Praesent lobortis massa ligula, varius facilisis enim. Ut neque augue, euismod vel pellentesque ut, interdum in diam. Nam scelerisque iaculis nisi, non eleifend erat congue eget. Donec quis odio nec magna ullamcorper vehicula vel ut tortor. Donec convallis interdum elementum. Morbi sit amet blandit mauris. Cras consectetur auctor ante et dignissim. Sed nec nisi enim. Morbi bibendum ante nec dolor dictum eget congue diam fermentum.
+    
+    %p Vestibulum rutrum dignissim risus, a feugiat libero viverra nec. Quisque tortor risus, eleifend vitae condimentum sed, convallis vitae quam. Cras egestas tempor consectetur. Donec commodo interdum purus, quis laoreet sapien bibendum non. Donec dictum urna et nunc viverra et fermentum purus cursus. Praesent sodales sem eget justo ultricies laoreet. Nunc dignissim, metus scelerisque condimentum pulvinar, elit orci posuere nisi, et mollis neque quam et mauris. Mauris et pretium tellus. Quisque velit nisi, tempor ac dictum id, rutrum a odio. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque vel arcu ut turpis rhoncus scelerisque aliquet non enim. Curabitur porttitor egestas facilisis. Ut nisi nisl, vestibulum ut consectetur a, adipiscing quis quam. Cras a diam eu purus euismod placerat vel et sapien. Nullam urna mi, sodales eget mattis a, porta in nisl. Ut eget diam vel nunc consectetur vestibulum nec ut diam.
+    
+    %p Suspendisse posuere tristique euismod. Mauris congue faucibus dui, at lobortis quam suscipit vel. Donec fringilla nisl et elit consectetur aliquam. Ut a magna quis orci porta placerat eu ac magna. Mauris nulla nulla, cursus ac blandit sit amet, ultricies non libero. Proin est magna, iaculis a rhoncus eget, hendrerit a ante. Etiam quis nibh ante.
+    
+    %p Ut molestie, turpis a posuere gravida, lacus erat suscipit mauris, a molestie ligula felis quis dui. Donec malesuada aliquam sagittis. Donec neque velit, eleifend non facilisis sit amet, mattis sit amet odio. Fusce enim nunc, accumsan fermentum ultrices a, iaculis euismod lacus. Maecenas porttitor, arcu at tempus fringilla, neque felis egestas quam, et vulputate arcu nibh scelerisque diam. Nunc eu sem quis nibh volutpat scelerisque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean vitae dolor arcu, dapibus interdum risus. Suspendisse pretium mauris nisl, quis porttitor mauris.
+    
+    :javascript
+      content = "javascript:(function(){";
+      content += "  var w = window,";
+      content += "  d = window.document,";
+      content += "  sa = d.createElement('script'),";
+      content += "  sb = d.createElement('script'),";
+      content += "  l = encodeURIComponent(w.location),";
+      content += "  lib = ('__proto__' in {} ? 'zepto' : 'jquery'),";
+      content += "  u = 'http://10.0.0.17:4000/' + lib + '.min.js';";
+      content += "  b = 'http://10.0.0.17:4000/bookmark.js';";
+      content += "  function load() {";
+      content += "    if (d.readyState && d.readyState != 'complete') {";
+      content += "      setTimeout(load, 200);";
+      content += "    } else {";
+      content += "      sa.setAttribute('src', u);";
+      content += "      sb.setAttribute('src', b);";
+      content += "      d.body.appendChild(sa);";
+      content += "      d.body.appendChild(sb);";
+      content += "    }";
+      content += "  }";
+      content += "  load();";
+      content += "}())";
+      document.getElementById('link').setAttribute('href', content);
