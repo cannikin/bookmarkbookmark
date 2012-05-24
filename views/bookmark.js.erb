@@ -1,0 +1,29 @@
+<%= @js_lib %>
+
+$(function() {
+  var styles = "<%= @styles %>";
+
+  // Create style wrapper
+  var style = $('<style>').attr('type','text/css').text(styles);
+  
+  // Create bookmark container and list
+  var container = $('<div>').addClass('bkbk');
+  var list = $('<ul>');
+  var loading = $('<img>').attr('src','<%= @host_with_port %>/images/indicator_medium.gif').addClass('bkbk-loading');
+  var close = $('<a>').attr('href', '#').addClass('bkbk-close').html('&times;');
+  
+  // <li><a href="//google.com">Google</a></li></ul>');
+  container.prepend(list).prepend(loading).prepend(close);
+
+  // Add bookmark styles and contents to page
+  $('body').prepend(style).prepend(container);
+  
+  // Add the close button and setup click handling
+  $('.bkbk-close').on('click', function(e) {
+    container.animate({'left':'-305px'}, 500, 'ease');
+    e.preventDefault();
+  });
+  
+  // Finally, show the list
+  container.animate({'left':'0'}, 500, 'ease');
+});
