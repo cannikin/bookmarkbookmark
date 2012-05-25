@@ -7,5 +7,5 @@ end
 
 configure :production do
   set :database, ENV['DATABASE_URL']
-  database.logger = Logger.new('log/database.log')
+  # database.logger = Logger.new('log/database.log')
 end

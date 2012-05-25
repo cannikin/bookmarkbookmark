@@ -9,13 +9,13 @@ require 'logger'
 
 require './config/database'
 
-puts "\nThis script will destroy any existing database in db/development.sqlite3!!"
-print "  Are you sure? (y|n) "
-answer = gets
+#puts "\nThis script will destroy any existing database in db/development.sqlite3!!"
+#print "  Are you sure? (y|n) "
+#answer = gets
 
-if answer.chomp.match(/\A[y|Y]\Z/)
+#if answer.chomp.match(/\A[y|Y]\Z/)
 
-  `rm db/development.sqlite3`
+  # `rm db/development.sqlite3`
   
   require './models'
   
@@ -58,7 +58,7 @@ if answer.chomp.match(/\A[y|Y]\Z/)
   
   puts "\nFirst user UUID: #{User.first[:uuid]}\n"
 
-end
+#end
 
 # Just exit, don't try to start up a Sinatra server
 exit 0
