@@ -50,13 +50,13 @@ if answer.chomp.match(/\A[y|Y]\Z/)
   
   # Create a user for testing
   user_id = User.insert :email => 'cannikinn@gmail.com', :password => Digest::SHA1.hexdigest('bosco'), :uuid => '9c8ee790-880d-012f-bf7e-60f8472ce36e'
-  Bookmark.insert :user_id => user_id, :title => 'Google', :link => 'http://www.google.com', :uuid => UUID.new.generate
-  Bookmark.insert :user_id => user_id, :title => 'Lost Art Press', :link => 'http://lostartpress.com', :uuid => UUID.new.generate
-  Bookmark.insert :user_id => user_id, :title => 'Amazon', :link => 'http://www.amazon.com', :uuid => UUID.new.generate
-  Bookmark.insert :user_id => user_id, :title => 'Everything you always wanted to know about something but were afraid to ask', :link => 'http://www.google.com', :uuid => UUID.new.generate
-  Bookmark.insert :user_id => user_id, :title => 'A9', :link => 'http://www.a9.com', :uuid => UUID.new.generate
+  Bookmark.insert :user_id => user_id, :title => 'Google', :link => 'http://www.google.com', :uuid => UUID.new.generate, :created_at => Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  Bookmark.insert :user_id => user_id, :title => 'Lost Art Press', :link => 'http://lostartpress.com', :uuid => UUID.new.generate, :created_at => Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  Bookmark.insert :user_id => user_id, :title => 'Amazon', :link => 'http://www.amazon.com', :uuid => UUID.new.generate, :created_at => Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  Bookmark.insert :user_id => user_id, :title => 'Everything you always wanted to know about something but were afraid to ask', :link => 'http://www.google.com', :uuid => UUID.new.generate, :created_at => Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  Bookmark.insert :user_id => user_id, :title => 'A9', :link => 'http://www.a9.com', :uuid => UUID.new.generate, :created_at => Time.now.strftime('%Y-%m-%d %H:%M:%S')
   
-  puts "\nFirst user UUID: #{User.first.uuid}\n"
+  puts "\nFirst user UUID: #{User.first[:uuid]}\n"
 
 end
 
