@@ -9,18 +9,21 @@
         // Add a bookmark to the list
         var addBookmark = function(data, visible) {
           $.each(data, function(id, data) {
-            var item = $('<li>').data('id', id);
+            var item = $('<li>').addClass('bkbk-bookmark').data('id',id).data('title',data['title']).html('<a href="' + data['link'] + '" class="bkbk-link">' + data['title'] + '</a><div class="bkbk-actions"><a href="#" class="bkbk-edit"><i title="Edit" class="icon-pencil"></i></a><a href="#" class="bkbk-delete"><i title="Delete" class="icon-trash"></i></a></div>');
+            // var item = $('<li>').addClass('bkbk-bookmark').data('id', id).data('title', data['title']);
             if (!visible) {
               item.css('opacity','0');
             }
+/*
             item.append($('<a>').attr('href', data['link']).addClass('bkbk-link').text(data.title));
             var actions = $('<div>').addClass('bkbk-actions');
             var editLink = $('<a>').attr('href','#').addClass('bkbk-edit');
-            editLink.append($('<i>').attr('title','Edit').text('p'));
+            editLink.append($('<i>').attr('title','Edit').addClass('icon-pencil'));
             var deleteLink = $('<a>').attr('href','#').addClass('bkbk-delete');
-            deleteLink.append($('<i>').attr('title','Edit').text('#'));
+            deleteLink.append($('<i>').attr('title','Delete').addClass('icon-trash'));
             actions.append(editLink).append(deleteLink);
             item.append(actions);
+*/
             $('.bkbk ul').append(item);
             if (!visible) {
               item.fadeIn();
@@ -97,9 +100,9 @@
         });
         
         // Watch for clicks on the background and close the panel
-        $(document).one('click', function(e) {
-          container.animate({'left':'-305px'}, 500, 'ease');
-        });
+        // $(document).one('click', function(e) {
+        //   container.animate({'left':'-305px'}, 500, 'ease');
+        // });
         
         // Show the list and put the cursor in the search box
         // container.animate({'left':'0'}, 500, 'ease');
@@ -107,6 +110,26 @@
 
 
 
+
+        ///////////////
+        // Search
+        ///////////////
+        var doSearch = function(e) {
+          var keyword = $(this).val().toLowerCase();
+          if (keyword == '') {
+            $('.bkbk-bookmark').show();
+          } else {
+            $('.bkbk-bookmark').each(function() {
+              var title = $(this).data('title').toLowerCase();
+              if (title.match(keyword)) {
+                $(this).show();
+              } else {
+                $(this).hide();
+              }
+            });
+          }
+        }
+        $('.bkbk-search input').on('keyup', doSearch).on('search', doSearch);
 
 
 
@@ -121,6 +144,15 @@
           e.preventDefault();
         });
         
+        // Pressing ENTER inside the title or link textboxes should save
+        $('.bkbk-new_title, .bkbk-new_link').on('keypress', function(e) {
+          console.info(e);
+          if (e.keyCode == 13) {
+            console.info('enter');
+            $('.bkbk-new_save').trigger('click');
+          }
+        })
+        
         // Deleting a bookmark
         $('ul').on('click', '.bkbk-delete', function(e) {
           var id = $(this).closest('li').data('id');
@@ -131,12 +163,10 @@
         // Deleting a bookmark
         $('ul').live('click', '.bkbk-edit', function(e) {
           console.info('edit click');
-          // var id = $(this).closest('li').data('id');
-          // console.info(id);
-          // doRemote(user+'/bookmarks/'+id+'destroy', 'bkbkDelete');
           e.preventDefault();
         });
 
+        // Clicking the add/cancel buttons
         $('.bkbk-add, .bkbk-add_cancel').on('click', function(e) {
           showHideNew();
           e.preventDefault();
@@ -148,13 +178,56 @@
       });
     </script>
     <style type="text/css">
+    
+      /*
       @font-face {
       	font-family: 'Pictos';
       	src: url('/fonts/pictos-web.eot');
-      	src: local('☺'), url('/fonts/pictos-web.woff') format('woff'), url('/fonts/pictos-web.ttf') format('truetype'), url('/fonts/pictos-web.svg#webfontIyfZbseF') format('svg');
+      	src: local('☺'), url('/fonts/pictos-web.woff') format('woff'), 
+      	     url('/fonts/pictos-web.ttf') format('truetype'), 
+      	     url('/fonts/pictos-web.svg#webfontIyfZbseF') format('svg');
       	font-weight: normal;
       	font-style: normal;
       }
+      */
+      
+      @charset "UTF-8";
+      
+      @font-face {
+        font-family: 'bkbk';
+        src: url('/fonts/bkbk.eot');
+        src: url('/fonts/bkbk.eot?#iefix') format('embedded-opentype'),
+             url('/fonts/bkbk.woff') format('woff'),
+             url('/fonts/bkbk.ttf') format('truetype'),
+             url('/fonts/bkbk.svg#bkbk') format('svg');
+        font-weight: normal; font-style: normal;
+      }
+      
+      [class^="icon-"], [class*=" icon-"] {
+        font-family: bkbk;
+        font-style: normal;
+        width: 1.1em;
+        text-align: center;
+      }
+      
+      .the-icons li {
+        font-size: 14px;
+        line-height: 24px;
+        height: 24px;
+      }
+      
+      .icon-plus:before { content: "+"; } /* '\2b' */
+      .icon-minus:before { content: "-"; } /* '\2d' */
+      .icon-heart-empty:before { content: "♡"; } /* '\2661' */
+      .icon-heart:before { content: "♥"; } /* '\2665' */
+      .icon-pencil:before { content: "✎"; } /* '\270e' */
+      .icon-ok:before { content: "✓"; } /* '\2713' */
+      .icon-cancel:before { content: "✕"; } /* '\2715' */
+      .icon-trash:before { content: ""; } /* '\e729' */
+      .icon-folder:before { content: "📁"; } /* '\1f4c1' */
+      .icon-folder-open:before { content: "📂"; } /* '\1f4c2' */
+
+
       .bkbk {
         font-family:Helvetica Neue, sans-serif;
         font-size:13px;
@@ -203,7 +276,7 @@
         font-family: Helvetica Neue,sans-serif}
 
       a.bkbk-new_save {
-        padding: 4px 6px;
+        padding: 4px 6px 4px 5px;
         margin-left: 6px;
         background-image: -webkit-linear-gradient(#479c4a 0%, #146c18 53.31%, #3b7d38 100%);      
         color: #ffffff;
@@ -247,8 +320,6 @@
         opacity: 1;
       }
       .bkbk i {
-        font-style: normal;
-        font-family: Pictos;
         padding: 0 0.2em;
       }
       .bkbk-actions a {
@@ -270,17 +341,18 @@
     </style>
   </head>
   <body>
+  
     <div class="bkbk" style="left: 0px;">
       <div class="bkbk-search">
-        <input type="search" placeholder="Search">
+        <input type="search" placeholder="Search" results="10" autosave="bkbk-search">
       </div>
       <div class="bkbk-new">
-        <a href="#" class="bkbk-add"><i title="Add">&</i></a>
-        <a href="#" class="bkbk-add_cancel" style="display:none"><i title="Cancel">*</i></a>
+        <a href="#" class="bkbk-add"><i title="Add" class="icon-plus"></i></a>
+        <a href="#" class="bkbk-add_cancel" style="display:none"><i title="Cancel" class="icon-cancel"></i></a>
         <div class="bkbk-add_container" style="display:none">
           <input class="bkbk-new_title" type="text" placeholder="Title">
           <input class="bkbk-new_link" type="text" placeholder="http://">
-          <a href="#" class="bkbk-new_save"><i title="Save">3</i></a>
+          <a href="#" class="bkbk-new_save"><i title="Save" class="icon-ok"></i></a>
         </div>
       </div>
       <img src="/images/indicator_medium.gif" class="bkbk-loading">
@@ -289,6 +361,8 @@
     
     <div class="main">
       <a id="link" title="BookmarkBookmark">BookmarkBookmark</a>
+      <textarea id="bookmarklet"></textarea>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       <script type="text/javascript">
         content = "javascript:(function(){";
@@ -298,7 +372,6 @@
         content += "  l = encodeURIComponent(w.location),";
         content += "  lib = ('__proto__' in {} ? 'zepto' : 'jquery'),";
         content += "  u = '//' + location.host + '/bkbk.js?u=9c8ee790-880d-012f-bf7e-60f8472ce36e&lib='+lib;";
-        content += " alert(u);"
         content += "  function load() {";
         content += "    if (d.readyState && d.readyState != 'complete') {";
         content += "      setTimeout(load, 200);";
@@ -310,7 +383,8 @@
         content += "  }";
         content += "  load();";
         content += "}())";
-        document.getElementById('link').setAttribute('href', content);
+        document.getElementById('link').setAttribute('href', content.replace(/ +/g," "));
+        document.getElementById('bookmarklet').value = content.replace(/ +/g," ");
       </script>
     </div>
   </body>

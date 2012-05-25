@@ -1,0 +1,52 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: 'bkbk-icons';
+  src: url('/fonts/bkbk-icons.eot');
+  src: url('/fonts/bkbk-icons.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/bkbk-icons.woff') format('woff'),
+       url('/fonts/bkbk-icons.ttf') format('truetype'),
+       url('/fonts/bkbk-icons.svg#bkbk-icons') format('svg');
+  font-weight: normal; font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  font-family: bkbk-icons;
+  font-style: normal;
+
+  /* font-size: 14px; */
+
+  /*display: inline-block;*/
+  width: 1.1em;
+  margin-right: .1em;
+  text-align: center;
+}
+
+.the-icons li {
+  font-size: 14px;
+  line-height: 24px;
+  height: 24px;
+}
+
+.icon-plus:before { content: "+"; } /* '\2b' */
+.icon-plus-1:before { content: ""; } /* '\e805' */
+.icon-plus-2:before { content: ""; } /* '\e80a' */
+.icon-heart-empty-2:before { content: ""; } /* '\e807' */
+.icon-heart-empty:before { content: "♡"; } /* '\2661' */
+.icon-heart-empty-1:before { content: ""; } /* '\e802' */
+.icon-heart-1:before { content: ""; } /* '\e801' */
+.icon-heart:before { content: "♥"; } /* '\2665' */
+.icon-heart-2:before { content: ""; } /* '\e806' */
+.icon-pencil-2:before { content: ""; } /* '\e80b' */
+.icon-pencil-1:before { content: ""; } /* '\e800' */
+.icon-pencil:before { content: "✎"; } /* '\270e' */
+.icon-ok:before { content: "✓"; } /* '\2713' */
+.icon-ok-1:before { content: ""; } /* '\e803' */
+.icon-ok-2:before { content: ""; } /* '\e808' */
+.icon-cancel-1:before { content: ""; } /* '\e804' */
+.icon-cancel-2:before { content: ""; } /* '\e809' */
+.icon-cancel:before { content: "✕"; } /* '\2715' */
+.icon-trash:before { content: ""; } /* '\e729' */
+.icon-trash-1:before { content: ""; } /* '\e80c' */
+.icon-trash-empty:before { content: ""; } /* '\e72a' */
+.icon-basket:before { content: ""; } /* '\e73d' */
