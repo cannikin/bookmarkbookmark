@@ -2,7 +2,6 @@ require 'bundler'
 Bundler.setup
 require 'sinatra'
 require 'sinatra/sequel'
-require 'pry'
 
 require './config/database'
 require './models'
