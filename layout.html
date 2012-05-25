@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sample Layout</title>
+    <script type="text/javascript" src="public/javascripts/zepto.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.bkbk-new_title').val(document.title);
+        $('.bkbk-new_link').val(location.href);
+        $('.bkbk-search input').focus();
+        
+        $('.bkbk-add, .bkbk-add_cancel').on('click', function(e) {
+          var add = $('.bkbk-add_container')
+          add.toggle();
+          if (add.is(':visible')) {
+            $('.bkbk-new_title').focus()
+            $('.bkbk-new_title').select();
+            $('.bkbk-add').hide();
+            $('.bkbk-add_cancel').show();
+          } else {
+            $('.bkbk-add').show();
+            $('.bkbk-add_cancel').hide();
+          }
+          e.preventDefault();
+        });
+      });
+    </script>
+    <style type="text/css">
+      @font-face {
+      	font-family: 'Pictos';
+      	src: url('public/fonts/pictos-web.eot');
+      	src: local('☺'), url('public/fonts/pictos-web.woff') format('woff'), url('public/fonts/pictos-web.ttf') format('truetype'), url('public/fonts/pictos-web.svg#webfontIyfZbseF') format('svg');
+      	font-weight: normal;
+      	font-style: normal;
+      }
+      .bkbk {
+        font-family:Helvetica Neue,sans-serif;
+        font-size:13px;
+        position:fixed;
+        width:260px;
+        height:100%;
+        padding:0;
+        overflow-x:hidden;
+        overflow-y:auto;
+        z-index:9999;
+        top:0;
+        left:-305px;
+        -webkit-box-shadow:3px 0 3px rgba(0,0,0,0.1);
+        -moz-box-shadow:3px 0 3px rgba(0,0,0,0.1);
+        -ms-box-shadow:3px 0 3px rgba(0,0,0,0.1);
+        -o-box-shadow:3px 0 3px rgba(0,0,0,0.1);
+        box-shadow:3px 0 3px rgba(0,0,0,0.1);
+        background-color:#eee}
+      .bkbk ul{
+        margin: 23px 0 0;
+        padding: 0;
+        list-style: none;
+        line-height: 1}
+      .bkbk li {
+        display: block;
+        padding: 0 4px 0 12px;
+        text-align: left;
+        overflow: hidden;
+        cursor: pointer;
+        }
+        .bkbk li:hover {
+          background-color:#fbfbfb;
+          color:#333;
+          -webkit-transition:background-color 0.1s linear;
+          }
+      .bkbk a{
+        color:#369;
+        text-decoration:none;
+        }
+      .bkbk a:hover{}
+      .bkbk-search{
+        padding:10px;
+        margin:0;
+        border-bottom:1px solid #d4d4d4}
+      .bkbk-search input{
+        width: 100%;
+        font-size: 14px;
+        font-family: Helvetica Neue,sans-serif}
+      a.bkbk-new_save {
+        padding: 4px 6px;
+        margin-left: 5px;
+        background-image: -webkit-linear-gradient(#479c4a 0%, #146c18 14.24%, #3b7d38 100%);      
+        color: #ffffff;
+        -webkit-box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      }
+      a.bkbk-add, a.bkbk-add_cancel {
+        display: block;
+        float: right;
+        padding: 4px 6px;
+        margin-right: 8px;
+        color: #ffffff;
+        -webkit-box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      }
+      .bkbk-add {
+        background-image: -webkit-linear-gradient(#479c4a 0%, #146c18 14.24%, #3b7d38 100%);      
+      }
+      .bkbk-add_cancel {
+        background-image: -webkit-linear-gradient(#9c4747 0%, #6c1515 14.24%, #7e3939 100%);      
+      }
+      .bkbk-loading{
+        display:block;
+        width:32px;
+        margin:50px auto}
+      .bkbk-link {
+        width: 200px;
+        display: block;
+        float: left;
+        padding: 8px 0
+        }
+      .bkbk-actions {
+        display: block;
+        float: right;
+        opacity: 0;
+        font-size: 16px;
+        margin-top: 6px;
+      }
+      .bkbk li:hover .bkbk-actions {
+        opacity: 1;
+      }
+      .bkbk i {
+        font-style: normal;
+        font-family: Pictos;
+        padding: 0 0.2em
+      }
+      .bkbk-actions a {
+        color: #cccccc;
+      }
+        .bkbk-actions a:hover {
+          color: #336699;
+        }
+      .bkbk-add_container {
+        padding: 10px 0 0 10px;
+      }
+        .bkbk-add_container input {
+          width: 80%;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="bkbk" style="left: 0px;
+ ">
+      <div class="bkbk-search">
+        <input type="search" placeholder="Search">
+      </div>
+      <div class="bkbk-new">
+        <a href="#" class="bkbk-add"><i title="Add">&</i></a>
+        <a href="#" class="bkbk-add_cancel" style="display:none"><i title="Cancel">*</i></a>
+        <div class="bkbk-add_container" style="display:none">
+          <input class="bkbk-new_title" type="text" placeholder="Title">
+          <input class="bkbk-new_link" type="text" placeholder="http://">
+          <a href="#" class="bkbk-new_save"><i title="Save">3</i></a>
+        </div>
+      </div>
+      <img src="public/images/indicator_medium.gif" class="bkbk-loading" style="display: none;
+ ">
+      <ul>
+        <li>
+          <a href="http://www.google.com" class="bkbk-link">Google</a>
+          <div class="bkbk-actions">
+            <a href="#" class="bkbk-edit"><i title="Edit">p</i></a>
+            <a href="#" class="bkbk-delete"><i title="Delete">#</i></a>
+          </div>
+        </li>
+        <li>
+          <a href="http://lostartpress.com" class="bkbk-link">Lost Art Press</a>
+          <div class="bkbk-actions">
+            <a href="#" class="bkbk-edit"><i title="Edit">p</i></a>
+            <a href="#" class="bkbk-delete"><i title="Delete">#</i></a>
+          </div>
+        </li>
+        <li>
+          <a href="http://www.amazon.com" class="bkbk-link">Amazon</a>
+          <div class="bkbk-actions">
+            <a href="#" class="bkbk-edit"><i title="Edit">p</i></a>
+            <a href="#" class="bkbk-delete"><i title="Delete">#</i></a>
+          </div>
+        </li>
+        <li>
+          <a href="http://www.google.com" class="bkbk-link">Everything you always wanted to know about something but were afraid to ask</a>
+          <div class="bkbk-actions">
+            <a href="#" class="bkbk-edit"><i title="Edit">p</i></a>
+            <a href="#" class="bkbk-delete"><i title="Delete">#</i></a>
+          </div>
+        </li>
+        <li>
+          <a href="http://www.a9.com" class="bkbk-link">A9</a>
+          <div class="bkbk-actions">
+            <a href="#" class="bkbk-edit"><i title="Edit">p</i></a>
+            <a href="#" class="bkbk-delete"><i title="Delete">#</i></a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
