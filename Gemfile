@@ -2,7 +2,6 @@ source :rubygems
 
 gem 'sinatra'
 gem 'sinatra-sequel'
-gem 'sqlite3'
 gem 'haml'
 gem 'sass'
 gem 'json'
@@ -16,6 +15,7 @@ group :development do
   gem 'pry-nav'
   gem 'shotgun'
   gem 'heroku'
+  gem 'sqlite3'
   # gem 'guard-shotgun', :github => 'rchampourlier/guard-shotgun'
 end
 
