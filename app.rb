@@ -53,7 +53,7 @@ end
 # List bookmarks
 get '/:u/bookmarks' do
   if @user = User.where(:uuid => params[:u]).first
-    bookmarks = Bookmark.where(:user_id => @user.id).order(:created_at).collect { |b| bookmark_output(b) }
+    bookmarks = Bookmark.where(:user_id => @user.id).order(:created_at, :id).collect { |b| bookmark_output(b) }
       
     callback_wrapper do
       bookmarks.to_json
