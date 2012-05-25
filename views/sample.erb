@@ -6,6 +6,7 @@
     <script type="text/javascript">
       $(function() {
       
+        // Add a bookmark to the list
         var addBookmark = function(data, visible) {
           $.each(data, function(id, data) {
             var item = $('<li>').data('id', id);
@@ -27,6 +28,7 @@
           });
         };
         
+        // Perform a remote call by adding a <script> tag to the page
         var doRemote = function(path, callback, params) {
           var remoteScript = document.createElement('script');
           var url = '//<%= host_with_port %>/' + path + '?r=' + new Date().getTime() + '&callback=' + callback;
@@ -39,6 +41,21 @@
           remoteScript.setAttribute('type','text/javascript');
           document.body.appendChild(remoteScript);
         };
+        
+        // Show and hide the "new bookmark" area
+        var showHideNew = function() {
+          var add = $('.bkbk-add_container')
+          add.toggle();
+          if (add.is(':visible')) {
+            $('.bkbk-new_title').focus()
+            $('.bkbk-new_title').select();
+            $('.bkbk-add').hide();
+            $('.bkbk-add_cancel').show();
+          } else {
+            $('.bkbk-add').show();
+            $('.bkbk-add_cancel').hide();
+          }
+        };
       
         //////////////////
         // Callbacks
@@ -46,7 +63,7 @@
         
         // Loading bookmarks callback
         window.bkbkLoad = function(data) {
-          // loading.hide();
+          loading.hide();
           $.each(data, function(i, item) {
             addBookmark(item, true);
           });
@@ -72,6 +89,7 @@
         var body = $('body');
         var container = $('.bkbk');
         var search = $('.bkbk-search');
+        var loading = $('.bkbk-loading');
         
         // Stop propagation of click events in the container so as to not close the panel
         $('.bkbk').on('click', function(e) {
@@ -118,20 +136,6 @@
           // doRemote(user+'/bookmarks/'+id+'destroy', 'bkbkDelete');
           e.preventDefault();
         });
-        
-        showHideNew = function() {
-          var add = $('.bkbk-add_container')
-          add.toggle();
-          if (add.is(':visible')) {
-            $('.bkbk-new_title').focus()
-            $('.bkbk-new_title').select();
-            $('.bkbk-add').hide();
-            $('.bkbk-add_cancel').show();
-          } else {
-            $('.bkbk-add').show();
-            $('.bkbk-add_cancel').hide();
-          }
-        };
 
         $('.bkbk-add, .bkbk-add_cancel').on('click', function(e) {
           showHideNew();
@@ -218,6 +222,8 @@
         background-image: -webkit-linear-gradient(#479c4a 0%, #146c18 14.24%, #3b7d38 100%);      
       }
       .bkbk-add_cancel {
+        position: relative;
+        z-index: 2;
         background-image: -webkit-linear-gradient(#9c4747 0%, #6c1515 14.24%, #7e3939 100%);      
       }
       .bkbk-loading{
@@ -243,13 +249,16 @@
       .bkbk i {
         font-style: normal;
         font-family: Pictos;
-        padding: 0 0.2em
+        padding: 0 0.2em;
       }
       .bkbk-actions a {
         color: #cccccc;
       }
         .bkbk-actions a:hover {
           color: #336699;
+        }
+        .bkbk-actions i {
+          text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
         }
       .bkbk-add_container {
         min-height: 1px;
@@ -274,7 +283,7 @@
           <a href="#" class="bkbk-new_save"><i title="Save">3</i></a>
         </div>
       </div>
-      <img src="/images/indicator_medium.gif" class="bkbk-loading" style="display: none;">
+      <img src="/images/indicator_medium.gif" class="bkbk-loading">
       <ul></ul>
     </div>
     
