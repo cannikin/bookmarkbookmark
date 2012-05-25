@@ -55,6 +55,8 @@ if answer.chomp.match(/\A[y|Y]\Z/)
   Bookmark.insert :user_id => user_id, :title => 'Amazon', :link => 'http://www.amazon.com', :uuid => UUID.new.generate
   Bookmark.insert :user_id => user_id, :title => 'Everything you always wanted to know about something but were afraid to ask', :link => 'http://www.google.com', :uuid => UUID.new.generate
   Bookmark.insert :user_id => user_id, :title => 'A9', :link => 'http://www.a9.com', :uuid => UUID.new.generate
+  
+  puts "\nFirst user UUID: #{User.first.uuid}\n"
 
 end
 
