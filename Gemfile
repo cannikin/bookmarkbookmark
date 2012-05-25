@@ -9,11 +9,17 @@ gem 'json'
 gem 'uuid'
 gem 'uglifier'
 gem 'therubyracer'
+gem 'foreman'
 
 group :development do
   gem 'pry'
   gem 'pry-nav'
   gem 'shotgun'
+  gem 'heroku'
   # gem 'guard-shotgun', :github => 'rchampourlier/guard-shotgun'
 end
 
+group :production do
+  gem 'thin'
+  gem 'pg'
+end
