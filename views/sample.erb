@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sample Layout</title>
+    <script type="text/javascript" src="/javascripts/zepto.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+      
+        var addBookmark = function(data, visible) {
+          $.each(data, function(id, data) {
+            var item = $('<li>').data('id', id);
+            if (!visible) {
+              item.css('opacity','0');
+            }
+            item.append($('<a>').attr('href', data['link']).addClass('bkbk-link').text(data.title));
+            var actions = $('<div>').addClass('bkbk-actions');
+            var editLink = $('<a>').attr('href','#').addClass('bkbk-edit');
+            editLink.append($('<i>').attr('title','Edit').text('p'));
+            var deleteLink = $('<a>').attr('href','#').addClass('bkbk-delete');
+            deleteLink.append($('<i>').attr('title','Edit').text('#'));
+            actions.append(editLink).append(deleteLink);
+            item.append(actions);
+            $('.bkbk ul').append(item);
+            if (!visible) {
+              item.fadeIn();
+            }
+          });
+        };
+        
+        var doRemote = function(path, callback, params) {
+          var remoteScript = document.createElement('script');
+          var url = '//<%= host_with_port %>/' + path + '?r=' + new Date().getTime() + '&callback=' + callback;
+          if (params) {
+            $.each(params, function(key,value) {
+              url += '&' + key + '=' + value;
+            });
+          }
+          remoteScript.setAttribute('src', url);
+          remoteScript.setAttribute('type','text/javascript');
+          document.body.appendChild(remoteScript);
+        };
+      
+        //////////////////
+        // Callbacks
+        //////////////////
+        
+        // Loading bookmarks callback
+        window.bkbkLoad = function(data) {
+          // loading.hide();
+          $.each(data, function(i, item) {
+            addBookmark(item, true);
+          });
+        };
+        
+        window.bkbkAdd = function(data) {
+          addBookmark(data, false);
+        };
+        
+        window.bkbkEdit = function(data) {
+          
+        };
+        
+        window.bkbkDelete = function(data) {
+          $.each(data, function(id, data) {
+            $('li[data-id="'+id+'"]').fadeOut();
+          });
+        };
+      
+      
+        
+        var user = '<%= @user.uuid %>';
+        var body = $('body');
+        var container = $('.bkbk');
+        var search = $('.bkbk-search');
+        
+        // Stop propagation of click events in the container so as to not close the panel
+        $('.bkbk').on('click', function(e) {
+          e.stopPropagation();
+        });
+        
+        // Watch for clicks on the background and close the panel
+        $(document).one('click', function(e) {
+          container.animate({'left':'-305px'}, 500, 'ease');
+        });
+        
+        // Show the list and put the cursor in the search box
+        // container.animate({'left':'0'}, 500, 'ease');
+        search.find('input').focus();
+
+
+
+
+
+
+        $('.bkbk-new_title').val(document.title);
+        $('.bkbk-new_link').val(location.href);
+        $('.bkbk-search input').focus();
+        
+        // Saving a new bookmark
+        $('.bkbk-new_save').on('click', function(e) {
+          showHideNew();
+          doRemote(user+'/bookmarks/create', 'bkbkAdd', {"title":$('.bkbk-new_title').val(), "link":$('.bkbk-new_link').val()});
+          e.preventDefault();
+        });
+        
+        // Deleting a bookmark
+        $('ul').on('click', '.bkbk-delete', function(e) {
+          var id = $(this).closest('li').data('id');
+          doRemote(user+'/bookmarks/'+id+'/destroy', 'bkbkDelete');
+          e.preventDefault();
+        });
+        
+        // Deleting a bookmark
+        $('ul').live('click', '.bkbk-edit', function(e) {
+          console.info('edit click');
+          // var id = $(this).closest('li').data('id');
+          // console.info(id);
+          // doRemote(user+'/bookmarks/'+id+'destroy', 'bkbkDelete');
+          e.preventDefault();
+        });
+        
+        showHideNew = function() {
+          var add = $('.bkbk-add_container')
+          add.toggle();
+          if (add.is(':visible')) {
+            $('.bkbk-new_title').focus()
+            $('.bkbk-new_title').select();
+            $('.bkbk-add').hide();
+            $('.bkbk-add_cancel').show();
+          } else {
+            $('.bkbk-add').show();
+            $('.bkbk-add_cancel').hide();
+          }
+        };
+
+        $('.bkbk-add, .bkbk-add_cancel').on('click', function(e) {
+          showHideNew();
+          e.preventDefault();
+        });
+        
+        // Finally, load the list of bookmarks
+        doRemote(user+'/bookmarks', 'bkbkLoad');
+        
+      });
+    </script>
+    <style type="text/css">
+      @font-face {
+      	font-family: 'Pictos';
+      	src: url('/fonts/pictos-web.eot');
+      	src: local('☺'), url('/fonts/pictos-web.woff') format('woff'), url('/fonts/pictos-web.ttf') format('truetype'), url('/fonts/pictos-web.svg#webfontIyfZbseF') format('svg');
+      	font-weight: normal;
+      	font-style: normal;
+      }
+      .bkbk {
+        font-family:Helvetica Neue, sans-serif;
+        font-size:13px;
+        position:fixed;
+        width:260px;
+        height:100%;
+        padding:0;
+        overflow-x:hidden;
+        overflow-y:auto;
+        z-index:9999;
+        top:0;
+        left:-305px;
+        -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        background-color:#eee}
+      .bkbk ul{
+        margin: 23px 0 0;
+        padding: 0;
+        list-style: none;
+        line-height: 1;
+        }
+      .bkbk li {
+        display: block;
+        padding: 0 4px 0 12px;
+        text-align: left;
+        overflow: hidden;
+        cursor: pointer;
+        }
+        .bkbk li:hover {
+          background-color:#fbfbfb;
+          color:#333;
+          -webkit-transition:background-color 0.1s linear;
+          }
+      .bkbk a{
+        color:#369;
+        text-decoration:none;
+        }
+      .bkbk a:hover{}
+      .bkbk-search{
+        padding: 8px 10px;
+        margin: 0;
+        background-color: #dddddd;
+        border-bottom: 1px solid #cccccc;}
+      .bkbk-search input{
+        width: 100%;
+        font-size: 14px;
+        font-family: Helvetica Neue,sans-serif}
+
+      a.bkbk-new_save {
+        padding: 4px 6px;
+        margin-left: 6px;
+        background-image: -webkit-linear-gradient(#479c4a 0%, #146c18 53.31%, #3b7d38 100%);      
+        color: #ffffff;
+        -webkit-border-radius: 4px
+      }
+      a.bkbk-add, a.bkbk-add_cancel {
+        display: block;
+        float: right;
+        margin-top: -2px;
+        padding: 4px 6px;
+        margin-right: 8px;
+        color: #ffffff;
+        -webkit-box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      }
+      .bkbk-add {
+        background-image: -webkit-linear-gradient(#479c4a 0%, #146c18 14.24%, #3b7d38 100%);      
+      }
+      .bkbk-add_cancel {
+        background-image: -webkit-linear-gradient(#9c4747 0%, #6c1515 14.24%, #7e3939 100%);      
+      }
+      .bkbk-loading{
+        display:block;
+        width:32px;
+        margin:50px auto}
+      .bkbk-link {
+        width: 200px;
+        display: block;
+        float: left;
+        padding: 8px 0
+        }
+      .bkbk-actions {
+        display: block;
+        float: right;
+        opacity: 0;
+        font-size: 16px;
+        margin-top: 6px;
+      }
+      .bkbk li:hover .bkbk-actions {
+        opacity: 1;
+      }
+      .bkbk i {
+        font-style: normal;
+        font-family: Pictos;
+        padding: 0 0.2em
+      }
+      .bkbk-actions a {
+        color: #cccccc;
+      }
+        .bkbk-actions a:hover {
+          color: #336699;
+        }
+      .bkbk-add_container {
+        min-height: 1px;
+        padding: 6px 0 6px 10px;
+      }
+        .bkbk-add_container input {
+          width: 80%;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="bkbk" style="left: 0px;">
+      <div class="bkbk-search">
+        <input type="search" placeholder="Search">
+      </div>
+      <div class="bkbk-new">
+        <a href="#" class="bkbk-add"><i title="Add">&</i></a>
+        <a href="#" class="bkbk-add_cancel" style="display:none"><i title="Cancel">*</i></a>
+        <div class="bkbk-add_container" style="display:none">
+          <input class="bkbk-new_title" type="text" placeholder="Title">
+          <input class="bkbk-new_link" type="text" placeholder="http://">
+          <a href="#" class="bkbk-new_save"><i title="Save">3</i></a>
+        </div>
+      </div>
+      <img src="/images/indicator_medium.gif" class="bkbk-loading" style="display: none;">
+      <ul></ul>
+    </div>
+    
+    <div class="main">
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+  </body>
+</html>
