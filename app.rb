@@ -85,7 +85,19 @@ end
 
 # Edit a bookmark
 get '/:u/bookmarks/:b/update' do
+  if @user = User.where(:uuid => params[:u]).first
+    if bookmark = Bookmark.where(:user_id => @user.id, :uuid => params[:b]).first
+      bookmark.update :title => params[:title], :link => params[:link]
 
+      callback_wrapper do
+        bookmark_output(bookmark).to_json
+      end
+    else
+      not_found
+    end
+  else
+    not_found
+  end
 end
 
 # put '/:u/bookmarks/:b' do

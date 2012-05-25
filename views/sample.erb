@@ -4,30 +4,56 @@
     <title>Sample Layout</title>
     <script type="text/javascript" src="/javascripts/zepto.min.js"></script>
     <script type="text/javascript">
-      $(function() {
+      Zepto(function() {
+      
+              
+        var user = '<%= @user.uuid %>';
+        var body = Zepto('body');
+        var container = Zepto('.bkbk');
+        var search = Zepto('.bkbk-search');
+        var searchInput = search.find('input');
+        var loading = Zepto('.bkbk-loading');
+        
+        // Stop propagation of click events in the container so as to not close the panel
+        Zepto('.bkbk').on('click', function(e) {
+          e.stopPropagation();
+        });
+        
+        // Watch for clicks on the background and close the panel
+        // Zepto(document).one('click', function(e) {
+        //   container.animate({'left':'-305px'}, 500, 'ease');
+        // });
+        
+        // Show the list and put the cursor in the search box
+        // container.animate({'left':'0'}, 500, 'ease');
+        search.find('input').focus();
+        
       
         // Add a bookmark to the list
-        var addBookmark = function(data, visible) {
-          $.each(data, function(id, data) {
-            var item = $('<li>').addClass('bkbk-bookmark').data('id',id).data('title',data['title']).html('<a href="' + data['link'] + '" class="bkbk-link">' + data['title'] + '</a><div class="bkbk-actions"><a href="#" class="bkbk-edit"><i title="Edit" class="icon-pencil"></i></a><a href="#" class="bkbk-delete"><i title="Delete" class="icon-trash"></i></a></div>');
-            // var item = $('<li>').addClass('bkbk-bookmark').data('id', id).data('title', data['title']);
-            if (!visible) {
-              item.css('opacity','0');
-            }
+        var addBookmark = function(data, visible, placement) {
+          if (arguments.length == 2) {
+            placement = function(item) { $('.bkbk ul').append(item) };
+          }
+          console.info("placement: " + placement);
+          Zepto.each(data, function(id, data) {
+            var itemContent = '<div class="bkbk-show_container"><a href="' + data['link'] + '" class="bkbk-link">' + data['title'] + '</a><div class="bkbk-actions"><a href="#" class="bkbk-edit"><i title="Edit" class="icon-pencil"></i></a><a href="#" class="bkbk-delete"><i title="Delete" class="icon-trash"></i></a></div></div><div class="bkbk-edit_container" style="display:none"><input class="bkbk-edit_title" value="'+data['title']+'"><input class="bkbk-edit_link" value="'+data['link']+'"><a href="#" class="bkbk-edit_save"><i title="Save" class="icon-ok"></i></a><a href="#" class="bkbk-edit_cancel"><i title="Cancel" class="icon-cancel"></i></a></div>';
+            var item = Zepto('<li>').attr('id', id).addClass('bkbk-bookmark').data('title',data['title']).html(itemContent);
+            !visible ? item.css('opacity','0') : null;
+            
+            placement.call(this, item);
 /*
-            item.append($('<a>').attr('href', data['link']).addClass('bkbk-link').text(data.title));
-            var actions = $('<div>').addClass('bkbk-actions');
-            var editLink = $('<a>').attr('href','#').addClass('bkbk-edit');
-            editLink.append($('<i>').attr('title','Edit').addClass('icon-pencil'));
-            var deleteLink = $('<a>').attr('href','#').addClass('bkbk-delete');
-            deleteLink.append($('<i>').attr('title','Delete').addClass('icon-trash'));
-            actions.append(editLink).append(deleteLink);
-            item.append(actions);
-*/
-            $('.bkbk ul').append(item);
-            if (!visible) {
-              item.fadeIn();
+            if (position === undefined) {
+              console.info('position undefined')
+              Zepto('.bkbk ul').append(item);
+            } else if (position['after']) {
+              console.info('position after')
+              position['after'].after(item);
+            } else if (position['before']) {
+              console.info('position before')
+              position['before'].before(item);
             }
+*/
+            !visible ? item.fadeIn() : null;
           });
         };
         
@@ -36,7 +62,7 @@
           var remoteScript = document.createElement('script');
           var url = '//<%= host_with_port %>/' + path + '?r=' + new Date().getTime() + '&callback=' + callback;
           if (params) {
-            $.each(params, function(key,value) {
+            Zepto.each(params, function(key,value) {
               url += '&' + key + '=' + value;
             });
           }
@@ -47,16 +73,26 @@
         
         // Show and hide the "new bookmark" area
         var showHideNew = function() {
-          var add = $('.bkbk-add_container')
+          var add = Zepto('.bkbk-add_container')
           add.toggle();
           if (add.is(':visible')) {
-            $('.bkbk-new_title').focus()
-            $('.bkbk-new_title').select();
-            $('.bkbk-add').hide();
-            $('.bkbk-add_cancel').show();
+            Zepto('.bkbk-add').hide();
+            Zepto('.bkbk-add_cancel').show();
+            Zepto('.bkbk-new_title').focus();
           } else {
-            $('.bkbk-add').show();
-            $('.bkbk-add_cancel').hide();
+            Zepto('.bkbk-add').show();
+            Zepto('.bkbk-add_cancel').hide();
+            searchInput.focus();
+          }
+        };
+        
+        var showHideEdit = function(obj) {
+          var $this = Zepto(obj);
+          if ($this.closest('.bkbk-edit_container').is(':visible')) {
+            $this.closest('.bkbk-edit_container').hide().siblings('.bkbk-show_container').show();
+            searchInput.focus();
+          } else {
+            $this.closest('.bkbk-show_container').hide().siblings('.bkbk-edit_container').show().find('.bkbk-edit_title').focus();
           }
         };
       
@@ -67,7 +103,7 @@
         // Loading bookmarks callback
         window.bkbkLoad = function(data) {
           loading.hide();
-          $.each(data, function(i, item) {
+          Zepto.each(data, function(i, item) {
             addBookmark(item, true);
           });
         };
@@ -77,36 +113,31 @@
         };
         
         window.bkbkEdit = function(data) {
-          
+          Zepto.each(data, function(id, hash) {
+            var current = $('#'+id);
+            var placement;
+            
+            if ($('#'+id).prev().length != 0) {
+              placement = function(item) { 
+                current.prev().after(item);
+                current.remove();
+              };
+            } else if ($('#'+id).next().length != 0) {
+              placement = function(item) { 
+                current.next().before(item);
+                current.remove();
+              };
+            }
+            
+            addBookmark(data, true, placement);
+          });
         };
         
         window.bkbkDelete = function(data) {
-          $.each(data, function(id, data) {
-            $('li[data-id="'+id+'"]').fadeOut();
+          Zepto.each(data, function(id, data) {
+            Zepto('#'+id).fadeOut();
           });
         };
-      
-      
-        
-        var user = '<%= @user.uuid %>';
-        var body = $('body');
-        var container = $('.bkbk');
-        var search = $('.bkbk-search');
-        var loading = $('.bkbk-loading');
-        
-        // Stop propagation of click events in the container so as to not close the panel
-        $('.bkbk').on('click', function(e) {
-          e.stopPropagation();
-        });
-        
-        // Watch for clicks on the background and close the panel
-        // $(document).one('click', function(e) {
-        //   container.animate({'left':'-305px'}, 500, 'ease');
-        // });
-        
-        // Show the list and put the cursor in the search box
-        // container.animate({'left':'0'}, 500, 'ease');
-        search.find('input').focus();
 
 
 
@@ -115,60 +146,89 @@
         // Search
         ///////////////
         var doSearch = function(e) {
-          var keyword = $(this).val().toLowerCase();
+          var keyword = Zepto(this).val().toLowerCase();
           if (keyword == '') {
-            $('.bkbk-bookmark').show();
+            Zepto('.bkbk-bookmark').show();
           } else {
-            $('.bkbk-bookmark').each(function() {
-              var title = $(this).data('title').toLowerCase();
+            Zepto('.bkbk-bookmark').each(function() {
+              var title = Zepto(this).data('title').toLowerCase();
               if (title.match(keyword)) {
-                $(this).show();
+                Zepto(this).show();
               } else {
-                $(this).hide();
+                Zepto(this).hide();
               }
             });
           }
         }
-        $('.bkbk-search input').on('keyup', doSearch).on('search', doSearch);
+        searchInput.on('keyup', doSearch).on('search', doSearch);
 
 
 
-        $('.bkbk-new_title').val(document.title);
-        $('.bkbk-new_link').val(location.href);
-        $('.bkbk-search input').focus();
+        Zepto('.bkbk-new_title').val(document.title);
+        Zepto('.bkbk-new_link').val(location.href);
+        searchInput.focus();
+        
+        
+        
+        ///////////////
+        // Buttons
+        ///////////////
         
         // Saving a new bookmark
-        $('.bkbk-new_save').on('click', function(e) {
+        Zepto('.bkbk-new_save').on('click', function(e) {
           showHideNew();
-          doRemote(user+'/bookmarks/create', 'bkbkAdd', {"title":$('.bkbk-new_title').val(), "link":$('.bkbk-new_link').val()});
+          doRemote(user+'/bookmarks/create', 'bkbkAdd', {"title":Zepto('.bkbk-new_title').val(), "link":Zepto('.bkbk-new_link').val()});
           e.preventDefault();
         });
         
         // Pressing ENTER inside the title or link textboxes should save
-        $('.bkbk-new_title, .bkbk-new_link').on('keypress', function(e) {
-          console.info(e);
+        Zepto('.bkbk-new_title, .bkbk-new_link').on('keypress', function(e) {
           if (e.keyCode == 13) {
-            console.info('enter');
-            $('.bkbk-new_save').trigger('click');
+            Zepto('.bkbk-new_save').trigger('click');
           }
-        })
-        
-        // Deleting a bookmark
-        $('ul').on('click', '.bkbk-delete', function(e) {
-          var id = $(this).closest('li').data('id');
-          doRemote(user+'/bookmarks/'+id+'/destroy', 'bkbkDelete');
-          e.preventDefault();
         });
         
-        // Deleting a bookmark
-        $('ul').live('click', '.bkbk-edit', function(e) {
-          console.info('edit click');
-          e.preventDefault();
-        });
-
-        // Clicking the add/cancel buttons
-        $('.bkbk-add, .bkbk-add_cancel').on('click', function(e) {
+        // New add/cancel buttons
+        Zepto('.bkbk-add, .bkbk-add_cancel').on('click', function(e) {
           showHideNew();
+          e.preventDefault();
+        });
+        
+        
+                
+        // Editing a bookmark
+        Zepto('ul').on('click', '.bkbk-edit', function(e) {
+          showHideEdit(this);
+          e.preventDefault();
+        });
+        
+        // Saving an edit
+        Zepto('ul').on('click', '.bkbk-edit_save', function(e) {
+          var id = Zepto(this).closest('li').attr('id');
+          showHideEdit(this);
+          doRemote(user+'/bookmarks/'+id+'/update', 'bkbkEdit', {"title":Zepto(this).siblings('.bkbk-edit_title').val(), "link":Zepto(this).siblings('.bkbk-edit_link').val()})
+          e.preventDefault();
+        });
+        
+        // Pressing ENTER inside the title or link textboxes should save edits
+        Zepto('ul').on('keypress', '.bkbk-edit_title, .bkbk-edit_link', function(e) {
+          if (e.keyCode == 13) {
+            $(this).siblings('.bkbk-edit_save').trigger('click');
+          }
+        });
+        
+        // Cancel an edit
+        Zepto('ul').on('click', '.bkbk-edit_cancel', function(e) {
+          showHideEdit(this);
+          e.preventDefault();
+        });
+        
+        
+        
+        // Deleting a bookmark
+        Zepto('ul').on('click', '.bkbk-delete', function(e) {
+          var id = Zepto(this).closest('li').attr('id');
+          doRemote(user+'/bookmarks/'+id+'/destroy', 'bkbkDelete');
           e.preventDefault();
         });
         
@@ -206,7 +266,6 @@
       [class^="icon-"], [class*=" icon-"] {
         font-family: bkbk;
         font-style: normal;
-        width: 1.1em;
         text-align: center;
       }
       
@@ -220,6 +279,7 @@
       .icon-minus:before { content: "-"; } /* '\2d' */
       .icon-heart-empty:before { content: "♡"; } /* '\2661' */
       .icon-heart:before { content: "♥"; } /* '\2665' */
+      .icon-cog:before { content: "⚙"; } /* '\2699' */
       .icon-pencil:before { content: "✎"; } /* '\270e' */
       .icon-ok:before { content: "✓"; } /* '\2713' */
       .icon-cancel:before { content: "✕"; } /* '\2715' */
@@ -242,29 +302,7 @@
         left:-305px;
         -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5);
         background-color:#eee}
-      .bkbk ul{
-        margin: 23px 0 0;
-        padding: 0;
-        list-style: none;
-        line-height: 1;
-        }
-      .bkbk li {
-        display: block;
-        padding: 0 4px 0 12px;
-        text-align: left;
-        overflow: hidden;
-        cursor: pointer;
-        }
-        .bkbk li:hover {
-          background-color:#fbfbfb;
-          color:#333;
-          -webkit-transition:background-color 0.1s linear;
-          }
-      .bkbk a{
-        color:#369;
-        text-decoration:none;
-        }
-      .bkbk a:hover{}
+
       .bkbk-search{
         padding: 8px 10px;
         margin: 0;
@@ -275,14 +313,22 @@
         font-size: 14px;
         font-family: Helvetica Neue,sans-serif}
 
-      a.bkbk-new_save {
+      .bkbk a.bkbk-settings {
+        display: block;
+        position: fixed;
+        bottom: 5px;
+        left: 235px;
+        font-size: 18px;
+        color: #aaaaaa;
+      }
+      .bkbk a.bkbk-new_save {
         padding: 4px 6px 4px 5px;
         margin-left: 6px;
         background-image: -webkit-linear-gradient(#479c4a 0%, #146c18 53.31%, #3b7d38 100%);      
         color: #ffffff;
         -webkit-border-radius: 4px
       }
-      a.bkbk-add, a.bkbk-add_cancel {
+      .bkbk a.bkbk-add, .bkbk a.bkbk-add_cancel {
         display: block;
         float: right;
         margin-top: -2px;
@@ -303,41 +349,85 @@
         display:block;
         width:32px;
         margin:50px auto}
-      .bkbk-link {
-        width: 200px;
+      
+      .bkbk ul{
+        margin: 23px 0 0;
+        padding: 0;
+        list-style: none;
+        line-height: 1;
+        clear: left
+        }
+      .bkbk li {
         display: block;
-        float: left;
-        padding: 8px 0
+        padding: 0 4px 0 12px;
+        text-align: left;
+        overflow: hidden;
+        cursor: pointer;
         }
-      .bkbk-actions {
-        display: block;
-        float: right;
-        opacity: 0;
-        font-size: 16px;
-        margin-top: 6px;
-      }
-      .bkbk li:hover .bkbk-actions {
-        opacity: 1;
-      }
-      .bkbk i {
-        padding: 0 0.2em;
-      }
-      .bkbk-actions a {
-        color: #cccccc;
-      }
-        .bkbk-actions a:hover {
-          color: #336699;
+        .bkbk li:hover {
+          background-color:#fbfbfb;
+          color:#333;
+          -webkit-transition:background-color 0.1s linear;
+          }
+        .bkbk a {
+          color:#369;
+          text-decoration:none;
+          }
+        .bkbk-link {
+          width: 200px;
+          display: block;
+          float: left;
+          padding: 8px 0
+          }
+        .bkbk-actions {
+          display: block;
+          float: right;
+          opacity: 0;
+          font-size: 16px;
+          margin-top: 6px;
         }
-        .bkbk-actions i {
-          text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+        .bkbk li:hover .bkbk-actions {
+          opacity: 1;
         }
-      .bkbk-add_container {
-        min-height: 1px;
-        padding: 6px 0 6px 10px;
-      }
-        .bkbk-add_container input {
+        .bkbk i {
+          padding: 0 0.2em;
+        }
+        .bkbk-actions a {
+          color: #cccccc;
+        }
+          .bkbk-actions a:hover {
+            color: #336699;
+          }
+          a.bkbk-delete:hover {
+            color: #990000;
+          }
+          .bkbk-actions i {
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+          }
+        .bkbk-add_container {
+          min-height: 1px;
+          padding: 6px 0 6px 10px;
+        }
+          .bkbk-add_container input {
+            width: 80%;
+          }
+        .bkbk-edit_container input {
           width: 80%;
         }
+          a.bkbk-edit_save, a.bkbk-edit_cancel {
+            color: #bbbbbb;
+            font-size: 14px;
+            padding: 0 1px;
+          }
+          a.bkbk-edit_save {
+            margin-left: 7px;
+          }
+            a.bkbk-edit_save:hover {
+              color: #009900;         
+            }
+            a.bkbk-edit_cancel:hover {
+              color: #990000;            
+            }
     </style>
   </head>
   <body>
@@ -346,6 +436,7 @@
       <div class="bkbk-search">
         <input type="search" placeholder="Search" results="10" autosave="bkbk-search">
       </div>
+      <a href="#" class="bkbk-settings"><i title="Settings" class="icon-cog"></i></a>
       <div class="bkbk-new">
         <a href="#" class="bkbk-add"><i title="Add" class="icon-plus"></i></a>
         <a href="#" class="bkbk-add_cancel" style="display:none"><i title="Cancel" class="icon-cancel"></i></a>
