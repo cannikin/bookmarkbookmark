@@ -25,7 +25,7 @@ require './config/database'
       String      :email,     :size => 255
       String      :password,  :size => 255
       String      :uuid,      :size => 36
-      Datetime    :created_at
+      DateTime    :created_at
   
       index :id,    :unique => true
       index :email, :unique => true
@@ -40,7 +40,7 @@ require './config/database'
       String      :title,     :size => 255
       String      :link,      :text => true
       String      :uuid,      :size => 36
-      Datetime    :created_at
+      DateTime    :created_at
   
       index :id,      :unique => true
       index :user_id
