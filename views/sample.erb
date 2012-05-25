@@ -288,7 +288,30 @@
     </div>
     
     <div class="main">
+      <a id="link" title="BookmarkBookmark">BookmarkBookmark</a>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <script type="text/javascript">
+        content = "javascript:(function(){";
+        content += "  var w = window,";
+        content += "  d = window.document,";
+        content += "  s = d.createElement('script'),";
+        content += "  l = encodeURIComponent(w.location),";
+        content += "  lib = ('__proto__' in {} ? 'zepto' : 'jquery'),";
+        content += "  u = '//' + location.host + '/bkbk.js?u=9c8ee790-880d-012f-bf7e-60f8472ce36e&lib='+lib;";
+        content += " alert(u);"
+        content += "  function load() {";
+        content += "    if (d.readyState && d.readyState != 'complete') {";
+        content += "      setTimeout(load, 200);";
+        content += "    } else {";
+        content += "      s.setAttribute('src', u);";
+        content += "      s.setAttribute('type', 'text/javascript');";
+        content += "      d.body.appendChild(s);";
+        content += "    }";
+        content += "  }";
+        content += "  load();";
+        content += "}())";
+        document.getElementById('link').setAttribute('href', content);
+      </script>
     </div>
   </body>
 </html>
