@@ -12,7 +12,13 @@ end
 
 # Testing page
 get '/' do
-  haml :index
+  @user = User.first
+  erb :index
+end
+
+get '/views/index.erb' do
+  @user = User.first
+  erb :index
 end
 
 
@@ -41,12 +47,6 @@ get '/bkbk.js' do
   else
     User.where(:uuid => params[:u]).inspect
   end
-end
-
-
-get '/views/sample.erb' do
-  @user = User.first
-  erb :sample
 end
 
 
