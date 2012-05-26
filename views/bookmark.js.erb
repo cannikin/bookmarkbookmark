@@ -1,6 +1,98 @@
 <%= @js_lib %>
 
-$(function() {
+Zepto(function() {
+  var user = '<%= @user.uuid %>';
+  var body = Zepto('body');
+  
+  var styleCode = '<style type="text/css"><%= @styles %></style>';
+  var containerCode = '<div id="bkbk" class="bkbk"><div class="bkbk-search"><input type="search" placeholder="Search" results="10" autosave="bkbk-search"></div><div class="bkbk-new"><a href="#" class="bkbk-add"><i title="Add" class="icon-plus"></i></a><a href="#" class="bkbk-add_cancel" style="display:none"><i title="Cancel" class="icon-cancel"></i></a><div class="bkbk-add_container" style="display:none"><input class="bkbk-new_title" type="text" placeholder="Title"><input class="bkbk-new_link" type="text" placeholder="http://"><a href="#" class="bkbk-new_save"><i title="Save" class="icon-ok"></i></a></div></div><img src="/images/indicator_medium.gif" class="bkbk-loading"><ul></ul><div class="bkbk-footer"><a href="//bookmarkbookmark.com" class="bkbk-logo"><i class="icon-heart-empty"></i>bookmark<span>bookmark</span></a><a href="#" class="bkbk-settings"><i title="Settings" class="icon-cog"></i></a></div></div>';
+  
+  body.prepend(styleCode).prepend(containerCode);
+  
+  var container = Zepto('#bkbk');
+  var bookmarks = container.find('ul');
+  var search = Zepto('.bkbk-search');
+  var searchInput = search.find('input');
+  var loading = Zepto('.bkbk-loading');
+  
+  // Stop propagation of click events in the container so as to not close the panel
+  container.on('click', function(e) {
+    e.stopPropagation();
+  });
+  
+  // Watch for clicks on the background and close the panel
+  Zepto(document).one('click', function(e) {
+    container.animate({'left':'-305px'}, 500, 'ease-in');
+    setTimeout(function() { container.remove() }, 500);
+  });
+  
+  // Show the list and put the cursor in the search box
+  container.animate({'left':'0'}, 500, 'ease-out');
+  searchInput.focus();
+  
+  // Populate the new bookmark inputs
+  Zepto('.bkbk-new_title').val(document.title);
+  Zepto('.bkbk-new_link').val(location.href);
+  
+  
+  /////////////
+  // Helpers
+  /////////////
+
+  // Add a bookmark to the list
+  var addBookmark = function(data, visible, placement) {
+    if (arguments.length == 2) {
+      placement = function(item) { bookmarks.append(item) };
+    }
+    console.info("placement: " + placement);
+    Zepto.each(data, function(id, data) {
+      var itemContent = '<div class="bkbk-show_container"><a href="' + data['link'] + '" class="bkbk-link">' + data['title'] + '</a><div class="bkbk-actions"><a href="#" class="bkbk-edit"><i title="Edit" class="icon-pencil"></i></a><a href="#" class="bkbk-delete"><i title="Delete" class="icon-trash"></i></a></div></div><div class="bkbk-edit_container" style="display:none"><input class="bkbk-edit_title" value="'+data['title']+'"><input class="bkbk-edit_link" value="'+data['link']+'"><a href="#" class="bkbk-edit_save"><i title="Save" class="icon-ok"></i></a><a href="#" class="bkbk-edit_cancel"><i title="Cancel" class="icon-cancel"></i></a></div>';
+      var item = Zepto('<li>').attr('id', id).addClass('bkbk-bookmark').data('title',data['title']).html(itemContent);
+      !visible ? item.css('opacity','0') : null;
+      placement.call(this, item);
+      !visible ? item.fadeIn() : null;
+    });
+  };
+  
+  // Perform a remote call by adding a <script> tag to the page
+  var doRemote = function(path, callback, params) {
+    var remoteScript = document.createElement('script');
+    var url = '//<%= host_with_port %>/' + path + '?r=' + new Date().getTime() + '&callback=' + callback;
+    if (params) {
+      Zepto.each(params, function(key,value) {
+        url += '&' + key + '=' + value;
+      });
+    }
+    remoteScript.setAttribute('src', url);
+    remoteScript.setAttribute('type','text/javascript');
+    document.body.appendChild(remoteScript);
+  };
+  
+  // Show and hide the "new bookmark" area
+  var showHideNew = function() {
+    var add = Zepto('.bkbk-add_container')
+    add.toggle();
+    if (add.is(':visible')) {
+      Zepto('.bkbk-add').hide();
+      Zepto('.bkbk-add_cancel').show();
+      Zepto('.bkbk-new_title').focus();
+    } else {
+      Zepto('.bkbk-add').show();
+      Zepto('.bkbk-add_cancel').hide();
+      searchInput.focus();
+    }
+  };
+  
+  var showHideEdit = function(obj) {
+    var $this = Zepto(obj);
+    if ($this.closest('.bkbk-edit_container').is(':visible')) {
+      $this.closest('.bkbk-edit_container').hide().siblings('.bkbk-show_container').show();
+      searchInput.focus();
+    } else {
+      $this.closest('.bkbk-show_container').hide().siblings('.bkbk-edit_container').show().find('.bkbk-edit_title').focus();
+    }
+  };
+
 
   //////////////////
   // Callbacks
@@ -9,64 +101,127 @@ $(function() {
   // Loading bookmarks callback
   window.bkbkLoad = function(data) {
     loading.hide();
-    $.each(data, function(key, value) {
-      list.append($('<li>').append($('<a>').attr('href',value).text(key)));
+    Zepto.each(data, function(i, item) {
+      addBookmark(item, true);
     });
   };
   
   window.bkbkAdd = function(data) {
-    
+    addBookmark(data, false);
   };
   
   window.bkbkEdit = function(data) {
-    
+    Zepto.each(data, function(id, hash) {
+      var current = $('#'+id);
+      var placement;
+      
+      if ($('#'+id).prev().length != 0) {
+        placement = function(item) { 
+          current.prev().after(item);
+          current.remove();
+        };
+      } else if ($('#'+id).next().length != 0) {
+        placement = function(item) { 
+          current.next().before(item);
+          current.remove();
+        };
+      }
+      
+      addBookmark(data, true, placement);
+    });
   };
   
   window.bkbkDelete = function(data) {
-    
+    Zepto.each(data, function(id, data) {
+      var obj = Zepto('#'+id)
+      obj.fadeOut();
+      setTimeout(function() { obj.remove(); }, 500);
+    });
   };
-  
-  var addRemote = function(path, callback) {
-    var remoteScript = document.createElement('script');
-    remoteScript.setAttribute('src','//<%= host_with_port %>/' + path + '?callback=' + callback);
-    remoteScript.setAttribute('type','text/javascript');
-    document.body.appendChild(remoteScript);
-  };
-  
-  var user = '<%= @user.uuid %>';
-  var styles = "<%= @styles %>";
-  var body = $('body');
 
-  // Create style wrapper
-  var style = $('<style>').attr('type','text/css').text(styles);
+
+
+  ///////////////
+  // Search
+  ///////////////
+  var doSearch = function(e) {
+    var keyword = Zepto(this).val().toLowerCase();
+    if (keyword == '') {
+      Zepto('.bkbk-bookmark').show();
+    } else {
+      Zepto('.bkbk-bookmark').each(function() {
+        var title = Zepto(this).data('title').toLowerCase();
+        if (title.match(keyword)) {
+          Zepto(this).show();
+        } else {
+          Zepto(this).hide();
+        }
+      });
+    }
+  }
+  searchInput.on('keyup', doSearch).on('search', doSearch);
   
-  // Create bookmark container and list
-  var container = $('<div>').addClass('bkbk');
-  var search = $('<div>').addClass('bkbk-search');
-  search.append($('<input>').attr('type','search').attr('placeholder','Search'));
-  var list = $('<ul>');
-  var loading = $('<img>').attr('src','//<%= host_with_port %>/images/indicator_medium.gif').addClass('bkbk-loading');
   
-  // Add UI elements to the container
-  container.prepend(list).prepend(loading).prepend(search);
   
-  // Stop propagation of click events in the container so as to not close the panel
-  container.on('click', function(e) {
-    e.stopPropagation();
+  ///////////////
+  // Buttons
+  ///////////////
+  
+  // Saving a new bookmark
+  Zepto('.bkbk-new_save').on('click', function(e) {
+    showHideNew();
+    doRemote(user+'/bookmarks/create', 'bkbkAdd', {"title":Zepto('.bkbk-new_title').val(), "link":Zepto('.bkbk-new_link').val()});
+    e.preventDefault();
   });
   
-  // Watch for clicks on the background and close the panel
-  $(document).one('click', function(e) {
-    container.animate({'left':'-305px'}, 500, 'ease');
+  // Pressing ENTER inside the title or link textboxes should save
+  Zepto('.bkbk-new_title, .bkbk-new_link').on('keypress', function(e) {
+    if (e.keyCode == 13) {
+      Zepto('.bkbk-new_save').trigger('click');
+    }
   });
   
-  // Add styles and container to page
-  body.prepend(style).prepend(container);
+  // New add/cancel buttons
+  Zepto('.bkbk-add, .bkbk-add_cancel').on('click', function(e) {
+    showHideNew();
+    e.preventDefault();
+  });
+          
+  // Editing a bookmark
+  Zepto('ul').on('click', '.bkbk-edit', function(e) {
+    showHideEdit(this);
+    e.preventDefault();
+  });
   
-  // Show the list and put the cursor in the search box
-  container.animate({'left':'0'}, 500, 'ease');
-  search.find('input').focus();
+  // Saving an edit
+  Zepto('ul').on('click', '.bkbk-edit_save', function(e) {
+    var id = Zepto(this).closest('li').attr('id');
+    showHideEdit(this);
+    doRemote(user+'/bookmarks/'+id+'/update', 'bkbkEdit', {"title":Zepto(this).siblings('.bkbk-edit_title').val(), "link":Zepto(this).siblings('.bkbk-edit_link').val()})
+    e.preventDefault();
+  });
+  
+  // Pressing ENTER inside the title or link textboxes should save edits
+  Zepto('ul').on('keypress', '.bkbk-edit_title, .bkbk-edit_link', function(e) {
+    if (e.keyCode == 13) {
+      $(this).siblings('.bkbk-edit_save').trigger('click');
+    }
+  });
+  
+  // Cancel an edit
+  Zepto('ul').on('click', '.bkbk-edit_cancel', function(e) {
+    showHideEdit(this);
+    e.preventDefault();
+  });
+  
+  // Deleting a bookmark
+  Zepto('ul').on('click', '.bkbk-delete', function(e) {
+    var id = Zepto(this).closest('li').attr('id');
+    doRemote(user+'/bookmarks/'+id+'/destroy', 'bkbkDelete');
+    e.preventDefault();
+  });
   
   // Finally, load the list of bookmarks
-  addRemote(user+'/bookmarks', 'bkbkLoad');
+  doRemote(user+'/bookmarks', 'bkbkLoad');
+  
 });

@@ -1,3 +1,5 @@
+@charset "UTF-8"
+
 $background: #eeeeee
 $links: #336699
 $text: #333333
@@ -24,8 +26,48 @@ $font-family: Helvetica Neue, sans-serif
   -o-transition: $trans
   transition: $trans
 
-.bkbk
-  font-family: $font-family
+@mixin gradient($value)
+  background-image: -webkit-linear-gradient($value)      
+  background-image: -moz-linear-gradient($value)  
+  
+@font-face 
+  font-family: 'bkbk'
+  src: url('/fonts/bkbk.eot')
+  src: url('/fonts/bkbk.eot?#iefix') format('embedded-opentype'), url('/fonts/bkbk.woff') format('woff'), url('/fonts/bkbk.ttf') format('truetype'), url('/fonts/bkbk.svg#bkbk') format('svg')
+  font-weight: normal 
+  font-style: normal
+
+[class^="icon-"], [class*=" icon-"] 
+  font-family: bkbk
+  font-style: normal
+  text-align: center
+  text-shadow: 1px 1px 0px white
+
+.icon-plus:before
+  content: "+"
+.icon-minus:before
+  content: "-"  /* '\2d' */
+.icon-heart-empty:before
+  content: "♡"  /* '\2661' */
+.icon-heart:before
+  content: "♥"  /* '\2665' */
+.icon-cog:before
+  content: "⚙"  /* '\2699' */
+.icon-pencil:before
+  content: "✎"  /* '\270e' */
+.icon-ok:before
+  content: "✓"  /* '\2713' */
+.icon-cancel:before
+  content: "✕"  /* '\2715' */
+.icon-trash:before
+  content: ""  /* '\e729' */
+.icon-folder:before
+  content: "📁"  /* '\1f4c1' */
+.icon-folder-open:before
+  content: "📂"  /* '\1f4c2' */
+
+#bkbk 
+  font-family: Helvetica Neue, sans-serif
   font-size: 13px
   position: fixed
   width: 260px
@@ -36,34 +78,160 @@ $font-family: Helvetica Neue, sans-serif
   z-index: 9999
   top: 0
   left: -305px
-  +box-shadow(3px 0 3px rgba(0,0,0,0.1))
-  background-color: $background
-  ul
-    margin: 0
-    padding: 0
-    list-style: none
-    line-height: 1
+  +box-shadow(0 0 10px rgba(0,0,0,0.5))
+  background-color: #eee
+
+.bkbk 
   a
-    display: block
-    padding: 0.8em 1em
-    color: $links
+    color: #369
     text-decoration: none
-    +transition(background-color .1s linear)
-    &:hover
-      background-color: lighten($background, 5%)
-      color: $text
-      +transition(background-color .1s linear)
+  i 
+    padding: 0 0.2em
 
 .bkbk-search
-  padding: 10px
-  margin: 0 0 10px
+  padding: 8px 10px
+  margin: 0
+  background-color: #dddddd
+  border-bottom: 1px solid #cccccc
   input
     width: 100%
     font-size: 14px
-    font-family: $font-family
-  border-bottom: 1px solid darken($background, 10%)
+    font-family: Helvetica Neue,sans-serif
+
+.bkbk-new 
+  i 
+    text-shadow: none
+
+a.bkbk-new_save 
+  padding: 4px 6px 4px 5px
+  margin-left: 10px
+  +gradient((#479c4a 0%, #146c18 53.31%, #3b7d38 100%))
+  color: #ffffff
+  +border-radius(4px)
+
+a.bkbk-add, a.bkbk-add_cancel 
+  display: block
+  float: right
+  margin-top: -2px
+  padding: 4px 6px
+  margin-right: 8px
+  color: #ffffff
+  +box-shadow(1px 1px 3px rgba(0,0,0,0.3))
+
+.bkbk-add 
+  +gradient((#479c4a 0%, #146c18 14.24%, #3b7d38 100%))        
+
+.bkbk-add_cancel 
+  position: relative
+  z-index: 2
+  +gradient((#9c4747 0%, #6c1515 14.24%, #7e3939 100%))
 
 .bkbk-loading
   display: block
   width: 32px
   margin: 50px auto
+
+#bkbk 
+  ul
+    margin: 23px 0 0
+    padding: 0
+    list-style: none
+    line-height: 1
+    clear: left
+  li 
+    display: block
+    padding: 0 4px 0 12px
+    text-align: left
+    overflow: hidden
+    cursor: pointer
+    &:hover 
+      background-color: #fbfbfb
+      color: #333
+      +transition(background-color 0.1s linear)
+        
+.bkbk-link 
+  width: 200px
+  display: block
+  float: left
+  padding: 8px 0
+  
+.bkbk-actions 
+  display: block
+  float: right
+  opacity: 0
+  font-size: 16px
+  margin-top: 6px
+
+#bkbk li:hover .bkbk-actions 
+  opacity: 1
+
+.bkbk-actions 
+  a 
+    color: #cccccc
+    margin-right: 3px
+    &:hover 
+      color: #336699
+  
+a.bkbk-delete:hover 
+  color: #990000
+  
+.bkbk-add_container 
+  min-height: 1px
+  padding: 6px 0 6px 10px
+  input 
+    width: 80%
+  
+.bkbk-edit_container 
+  input 
+    width: 80%
+
+a.bkbk-edit_save, a.bkbk-edit_cancel 
+  color: #bbbbbb
+  font-size: 14px
+  padding: 0 1px
+
+a.bkbk-edit_save 
+  margin-left: 3px
+  
+a.bkbk-edit_save:hover 
+  color: #009900         
+
+a.bkbk-edit_cancel:hover 
+  color: #990000            
+    
+.bkbk-footer 
+  display: block
+  width: 246px
+  overflow: hidden
+  position: fixed
+  bottom: 0
+  left: 0
+  padding: 10px 4px 0 10px
+  +gradient((rgba(240,240,240,0) 0%, rgba(240,240,240,1) 20%))
+
+a.bkbk-settings 
+  display: block
+  float: right
+  font-size: 18px
+  color: #aaaaaa
+  &:hover 
+    color: #333333
+
+a.bkbk-logo 
+  display: block
+  float: left
+  font-style: italic
+  font-weight: 200
+  background-color: #aaaaaa
+  padding: 5px 10px 5px 8px
+  color: #ffffff
+
+a.bkbk-logo
+  &:hover 
+    +gradient((#336699 0%, #194169 100%))
+  i 
+    margin-right: 2px
+    text-shadow: none
+  span 
+    font-weight: 700
+  
