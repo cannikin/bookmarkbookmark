@@ -39,11 +39,14 @@ get '/bkbk.js' do
   if @user = User.where(:uuid => params[:u]).first
     @js_lib = File.read("public/javascripts/#{params[:lib]}.min.js")
     @styles = Sass::Engine.new(File.read('views/styles.css.sass'), 
-      :style => :compressed).render.chomp
+      :style => :compressed).render.chomp.gsub(/"/,'\"')
     
     headers "Content-Type" => "application/javascript"
-    erb :'bookmark.js'
-    # uglify 'bookmark.js.erb'
+    if params[:compressed]
+      uglify 'bookmark.js.erb'
+    else
+      erb :'bookmark.js'
+    end
   else
     User.where(:uuid => params[:u]).inspect
   end
@@ -155,7 +158,7 @@ helpers do
   
   # Runs the named JS file through the Uglifier gem
   def uglify(file)
-    Uglifier.compile(ERB.new(File.read(File.join('views', file))).result(binding))
+    Uglifier.compile(ERB.new(File.read(File.join('views', file))).result(binding).force_encoding('UTF-8').gsub(/^#.*?\n/,''))
   end
   
   def bookmark_output(bookmark)
