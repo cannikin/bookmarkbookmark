@@ -490,7 +490,7 @@
     -->
     <div class="main" style="text-align:right">
       <a id="link" title="BookmarkBookmark">BookmarkBookmark</a>
-      <textarea id="bookmarklet"></textarea>
+      <textarea id="bookmarklet" rows="5" cols="40"></textarea>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       <script type="text/javascript">
@@ -500,7 +500,7 @@
         content += "  s = d.createElement('script'),";
         content += "  l = encodeURIComponent(w.location),";
         content += "  lib = ('__proto__' in {} ? 'zepto' : 'jquery'),";
-        content += "  u = '//' + location.host + '/bkbk.js?u=9c8ee790-880d-012f-bf7e-60f8472ce36e&lib='+lib;";
+        content += "  u = '//<%= options.environment == :development ? '10.0.0.17:4567' : 'bookmarkbookmark.com' %>/bkbk.js?u=9c8ee790-880d-012f-bf7e-60f8472ce36e&lib='+lib;";
         content += "  function load() {";
         content += "    if (d.readyState && d.readyState != 'complete') {";
         content += "      setTimeout(load, 200);";
