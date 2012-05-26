@@ -35,20 +35,19 @@ get '/ping' do
 end
 
 
-get '/bkbk.js' do
+get '/bkbk?:format?.js' do
   if @user = User.where(:uuid => params[:u]).first
     @js_lib = File.read("public/javascripts/#{params[:lib]}.min.js")
-    @styles = Sass::Engine.new(File.read('views/styles.css.sass'), 
-      :style => :compressed).render.chomp.gsub(/"/,'\"')
+    @styles = render_styles
     
     headers "Content-Type" => "application/javascript"
-    if params[:compressed]
+    if params[:format] and params[:format] == '.min'
       uglify 'bookmark.js.erb'
     else
       erb :'bookmark.js'
     end
   else
-    User.where(:uuid => params[:u]).inspect
+    not_found
   end
 end
 
@@ -158,7 +157,10 @@ helpers do
   
   # Runs the named JS file through the Uglifier gem
   def uglify(file)
-    Uglifier.compile(ERB.new(File.read(File.join('views', file))).result(binding).force_encoding('UTF-8').gsub(/^#.*?\n/,''))
+    #'hello world'
+    template = Tilt.new(File.join('views',file)).render(self)
+    Uglifier.compile(template)
+    #Uglifier.compile(ERB.new(File.read(File.join('views', file))).result(binding).force_encoding('UTF-8').gsub(/^#.*?\n/,''))
   end
   
   def bookmark_output(bookmark)
@@ -167,6 +169,11 @@ helpers do
   
   def time_format(time)
     time.strftime('%Y-%m-%d %H:%M:%S')  
+  end
+  
+  def render_styles
+    style_template = Tilt::ERBTemplate.new('views/styles.css.sass.erb').render(self)
+    Tilt::SassTemplate.new(:style => :compressed) { style_template }.render.chomp
   end
   
 end

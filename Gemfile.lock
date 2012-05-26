@@ -4,6 +4,7 @@ GEM
     addressable (2.2.8)
     coderay (1.0.6)
     daemons (1.1.8)
+    erubis (2.7.0)
     eventmachine (0.12.10)
     excon (0.13.4)
     execjs (1.4.0)
@@ -74,6 +75,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  erubis
   foreman
   haml
   heroku

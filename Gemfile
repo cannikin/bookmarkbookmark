@@ -9,6 +9,7 @@ gem 'uuid'
 gem 'uglifier'
 gem 'therubyracer'
 gem 'foreman'
+gem 'erubis'
 
 group :development do
   gem 'pry'
